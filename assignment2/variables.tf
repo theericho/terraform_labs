@@ -13,3 +13,9 @@ variable "vpc_name" {
   type        = string
   default     = "tf-main-vpc"
 }
+
+variable "peer_vpc_cidr_for_icmp" {
+  description = "Peer VPC CIDR permitted to send/receive ICMP"
+  type        = string
+  default     = "10.1.0.0/16"
+}

@@ -26,6 +26,14 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "ICMP from the peer VPC"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["10.1.0.0/16"]
+  }
+
   tags = {
     Name = "tf-web-sg"
   }

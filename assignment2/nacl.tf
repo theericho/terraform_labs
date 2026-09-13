@@ -40,17 +40,28 @@ resource "aws_network_acl_rule" "inbound_ephemeral" {
   to_port        = 65535
 }
 
-# # Inbound UDP ephemeral, for the DNS responses
-# resource "aws_network_acl_rule" "inbound_udp_ephemeral" {
-#   network_acl_id = aws_network_acl.public.id
-#   rule_number    = 130
-#   egress         = false
-#   protocol       = "udp"
-#   rule_action    = "allow"
-#   cidr_block     = "0.0.0.0/0"
-#   from_port      = 1024
-#   to_port        = 65535
-# }
+# Inbound UDP ephemeral, for the DNS responses
+resource "aws_network_acl_rule" "inbound_udp_ephemeral" {
+  network_acl_id = aws_network_acl.public.id
+  rule_number    = 130
+  egress         = false
+  protocol       = "udp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
+}
+
+resource "aws_network_acl_rule" "inbound_icmp_peer" {
+  network_acl_id = aws_network_acl.public.id
+  rule_number    = 140
+  egress         = false
+  protocol       = "icmp"
+  rule_action    = "allow"
+  cidr_block     = var.peer_vpc_cidr_for_icmp
+  icmp_type      = -1
+  icmp_code      = -1
+}
 
 # ---------- Outbound ----------
 resource "aws_network_acl_rule" "outbound_all_tcp" {
@@ -64,17 +75,28 @@ resource "aws_network_acl_rule" "outbound_all_tcp" {
   to_port        = 65535
 }
 
-# # Outbound DNS
-# resource "aws_network_acl_rule" "outbound_dns" {
-#   network_acl_id = aws_network_acl.public.id
-#   rule_number    = 110
-#   egress         = true
-#   protocol       = "udp"
-#   rule_action    = "allow"
-#   cidr_block     = "0.0.0.0/0"
-#   from_port      = 53
-#   to_port        = 53
-# }
+# Outbound DNS
+resource "aws_network_acl_rule" "outbound_dns" {
+  network_acl_id = aws_network_acl.public.id
+  rule_number    = 110
+  egress         = true
+  protocol       = "udp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 53
+  to_port        = 53
+}
+
+resource "aws_network_acl_rule" "outbound_icmp_peer" {
+  network_acl_id = aws_network_acl.public.id
+  rule_number    = 120
+  egress         = true
+  protocol       = "icmp"
+  rule_action    = "allow"
+  cidr_block     = var.peer_vpc_cidr_for_icmp
+  icmp_type      = -1
+  icmp_code      = -1
+}
 
 resource "aws_network_acl_association" "public_one" {
   network_acl_id = aws_network_acl.public.id
