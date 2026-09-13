@@ -27,3 +27,15 @@ data "aws_subnet" "public_one" {
     values = ["tf-public-subnet-1"]
   }
 }
+
+# terraform plan -> gets current public IP, but access changes if public IP or location changes
+# alternatively, export TF_VAR_my_ip="$(curl -s https://checkip.amazonaws.com)/32" in CLI
+# pass in IPs as env variables, but below is ok for local/single developer use
+
+data "http" "my_ip" {
+  url = "https://checkip.amazonaws.com"
+}
+
+locals {
+  my_ip = "${chomp(data.http.my_ip.response_body)}/32"
+}
